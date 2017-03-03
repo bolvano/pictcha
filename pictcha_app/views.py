@@ -77,6 +77,9 @@ def get_pics(secret, session):
     TODO: clean-up and struct
     '''
 
+    if not os.path.isdir(DISTORT_IMG_DIR_ABS):
+        os.mkdir(DISTORT_IMG_DIR_ABS)
+
     if not session.session_key: # making sure sessuin has a key
         session.save()
 
