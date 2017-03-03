@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PICTCHA DEMO</title>
+</head>
+<body>
+
+{% load static %}
+
+{% if success == 1 %}
+CONGRATS!
+{% elif success == -1 %}
+ERROR!
+{% else %}
+ENTER CAPTCHA (0 for original image, 1 for a changed one)!
+{% endif %}
+
+<br>
+
+<!-- {{secret}} -->
+
+<br>
+
+<form action="" method="POST">
+{% csrf_token %}
+    <input type="text" name="guess">
+    <button type="submit">Submit</button>
+</form>
+
+<form action="" method="POST">
+{% csrf_token %}
+    <input type="hidden" name="new" value="1">
+    <button type="submit">New</button>
+</form>
+
+<br>
+
+{% for pair in pics %}
+
+<img src='{% get_media_prefix %}{{pair.0}}'>
+
+{% endfor %}
+
+<br>
+
+
+
+</body>
+</html>

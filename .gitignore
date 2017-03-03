@@ -1,0 +1,10 @@
+*.pyc
+*~
+__pycache__
+db.sqlite3
+/media/*
+!/media/img
+!/media/img_dist
+/media/img_dist/*
+/static
+.DS_Store
