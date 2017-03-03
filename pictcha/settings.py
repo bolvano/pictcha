@@ -25,7 +25,7 @@ SECRET_KEY = '*ji3+=7yekl-d5assyz*2@oov8ozv@ds%7dak^+e2&^*nsh*6_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '*.pythonanywhere.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'pictcha.pythonanywhere.com']
 
 
 # Application definition
