@@ -2,48 +2,399 @@
 <html>
 <head>
     <title>PICTCHA DEMO</title>
+    <style>
+      .section {
+        clear: both;
+        padding: 0px;
+        margin: 0px;
+      }
+
+      .col {
+        display: block;
+        float:left;
+        margin: 1% 0 1% 1.6%;
+      }
+      .col:first-child { margin-left: 0; }
+
+      .group:before,
+      .group:after { content:""; display:table; }
+      .group:after { clear:both;}
+      .group { zoom:1; /* For IE 6/7 */ }
+
+      .span_3_of_3 { width: 100%; }
+      .span_2_of_3 { width: 66.13%; }
+      .span_1_of_3 { width: 32.26%; }
+
+      @media only screen and (max-width: 480px) {
+        .col {  margin: 1% 0 1% 0%; }
+        .span_3_of_3, .span_2_of_3, .span_1_of_3 { width: 100%; }
+      }
+
+      body {
+        background-color: #303030;
+      }
+
+      .container {
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .unchecked, .checked {
+        cursor: pointer;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        height: 20vh;
+        width: 20vw;
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+
+      .unchecked:hover,
+      .checked:hover {
+        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+      }
+
+      .unchecked {
+        display: none;
+      }
+
+      .checked {
+        display: none;
+      }
+
+      input[type="checkbox"]:not(:checked) + label .unchecked {
+        display: block;
+       }
+
+      input[type="checkbox"]:checked + label .checked {
+        display: block;
+      }
+
+      .btn {
+        background-color: #555;
+        color: #eee;
+        border-radius: .3em;
+        border-style: solid;
+        border-width: 1px;
+        display: inline-block;
+        font-family: avenir,helvetica,arial,sans-serif;
+        letter-spacing: .15em;
+        margin-bottom: .5em;
+        padding: 1em .75em;
+        text-decoration: none;
+        text-transform: uppercase;
+        -webkit-transition: color .4s,background-color .4s,border .4s;
+        transition: color .4s,background-color .4s,border .4s;
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        background-color: #333;
+        border-color: #999;
+        color: #eee;
+      }
+
+      .tingle-modal * {
+        box-sizing: border-box;
+      }
+
+      .tingle-modal {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        visibility: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        overflow-y: auto;
+        background: rgba(0, 0, 0, .8);
+        opacity: 0;
+        cursor: pointer;
+        -webkit-transition: -webkit-transform .2s ease;
+        transition: -webkit-transform .2s ease;
+        transition: transform .2s ease;
+        transition: transform .2s ease, -webkit-transform .2s ease;
+      }
+
+      /* confirm and alerts
+      -------------------------------------------------------------- */
+
+      .tingle-modal--confirm .tingle-modal-box {
+        text-align: center;
+      }
+
+      /* modal
+      -------------------------------------------------------------- */
+
+      .tingle-modal--noClose {
+        cursor: default;
+      }
+
+      .tingle-modal--noClose .tingle-modal__close {
+        display: none;
+      }
+
+      .tingle-modal__close {
+        position: fixed;
+        top: 10px;
+        right: 28px;
+        z-index: 1000;
+        padding: 0;
+        width: 5rem;
+        height: 5rem;
+        border: none;
+        background-color: transparent;
+        color: #f0f0f0;
+        font-size: 6rem;
+        font-family: monospace;
+        line-height: 1;
+        cursor: pointer;
+        -webkit-transition: color .3s ease;
+        transition: color .3s ease;
+      }
+
+      .tingle-modal__closeLabel {
+        display: none;
+      }
+
+      .tingle-modal__close:hover {
+        color: #fff;
+      }
+
+      .tingle-modal-box {
+        position: relative;
+        -ms-flex-negative: 0;
+        flex-shrink: 0;
+        margin-top: auto;
+        margin-bottom: auto;
+        width: 60%;
+        border-radius: 4px;
+        opacity: 1;
+        cursor: auto;
+        -webkit-transition: -webkit-transform .3s cubic-bezier(.175, .885, .32, 1.275);
+        transition: -webkit-transform .3s cubic-bezier(.175, .885, .32, 1.275);
+        transition: transform .3s cubic-bezier(.175, .885, .32, 1.275);
+        transition: transform .3s cubic-bezier(.175, .885, .32, 1.275), -webkit-transform .3s cubic-bezier(.175, .885, .32, 1.275);
+        -webkit-transform: scale(.8);
+        -ms-transform: scale(.8);
+        transform: scale(.8);
+        text-align: center;
+        font-size: 2em;
+        text-transform: uppercase;
+        background: #f2f2f2;
+      }
+
+      .tingle-modal-box__content {
+        padding: 3rem 3rem;
+      }
+
+      /* state
+      -------------------------------------------------------------- */
+
+      .tingle-enabled {
+        overflow: hidden;
+        height: 100%;
+      }
+
+      .tingle-modal--visible .tingle-modal-box__footer {
+        bottom: 0;
+      }
+
+      .tingle-enabled .tingle-content-wrapper {
+        -webkit-filter: blur(15px);
+        filter: blur(15px);
+      }
+
+      .tingle-modal--visible {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .tingle-modal--visible .tingle-modal-box {
+        -webkit-transform: scale(1);
+        -ms-transform: scale(1);
+        transform: scale(1);
+      }
+
+      .tingle-modal--overflow {
+        padding-top: 8vh;
+      }
+
+      /* btn
+      -------------------------------------------------------------- */
+
+      .tingle-btn {
+        display: inline-block;
+        margin: 0 .5rem;
+        padding: 1rem 2rem;
+        border: none;
+        background-color: grey;
+        box-shadow: none;
+        color: #fff;
+        vertical-align: middle;
+        text-decoration: none;
+        font-size: inherit;
+        font-family: inherit;
+        line-height: normal;
+        cursor: pointer;
+        -webkit-transition: background-color .4s ease;
+        transition: background-color .4s ease;
+      }
+
+      .tingle-btn--primary {
+        background-color: #3498db;
+      }
+
+      .tingle-btn--danger {
+        background-color: #e74c3c;
+      }
+
+      .tingle-btn--default {
+        background-color: #34495e;
+      }
+
+      .tingle-btn--pull-left {
+        float: left;
+      }
+
+      .tingle-btn--pull-right {
+        float: right;
+      }
+
+      /* responsive
+      -------------------------------------------------------------- */
+
+      @media (max-width : 540px) {
+        .tingle-modal-box {
+          width: auto;
+          border-radius: 0;
+        }
+
+        .tingle-modal {
+          top: 60px;
+          display: block;
+          width: 100%;
+        }
+
+        .tingle-modal--overflow {
+          padding: 0;
+        }
+
+        .tingle-modal-box__footer .tingle-btn {
+          display: block;
+          float: none;
+          margin-bottom: 1rem;
+          width: 100%;
+        }
+
+        .tingle-modal__close {
+          top: 0;
+          right: 0;
+          left: 0;
+          display: block;
+          width: 100%;
+          height: 60px;
+          border: none;
+          background-color: #2c3e50;
+          box-shadow: none;
+          color: #fff;
+          line-height: 55px;
+        }
+
+        .tingle-modal__closeLabel {
+          display: inline-block;
+          vertical-align: middle;
+          font-size: 1.5rem;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+        }
+
+        .tingle-modal__closeIcon {
+          display: inline-block;
+          margin-right: .5rem;
+          vertical-align: middle;
+          font-size: 4rem;
+        }
+      }
+    </style>
+
+    <script>
+      'use strict';
+      document.addEventListener("DOMContentLoaded", function(event) {
+        var status = {{success}};
+        var modal = new tingle.modal();
+        switch (status) {
+          case 1:
+            modal.open();
+            modal.setContent('Congratulations, you are human!');
+            break;
+          case -1:
+            modal.open();
+            modal.setContent('Sorry, you are not human.');
+            break;
+          default:
+            modal.open();
+            modal.setContent('Enter captcha, please!');
+            break;
+        }
+      });
+    </script>
 </head>
 <body>
 
 {% load static %}
 
-{% if success == 1 %}
-CONGRATS!
-{% elif success == -1 %}
-ERROR!
-{% else %}
-ENTER CAPTCHA (0 for original image, 1 for a changed one)!
-{% endif %}
+<div class="container">
 
-<br>
-
-<!-- {{secret}} -->
-
-<br>
-
-<form action="" method="POST">
-{% csrf_token %}
-    <input type="text" name="guess">
-    <button type="submit">Submit</button>
-</form>
-
-<form action="" method="POST">
-{% csrf_token %}
+  <form action="" method="POST">
+    {% csrf_token %}
     <input type="hidden" name="new" value="1">
-    <button type="submit">New</button>
-</form>
+    <button class="btn" type="submit">Другие картинки</button>
+  </form>
 
-<br>
+  <form action="/" method="POST">
+    {% csrf_token %}
 
-{% for pair in pics %}
+    <div class="section group">
+    {% for pair in pics %}
 
-<img src='{% get_media_prefix %}{{pair.0}}'>
+      <div class="col span_1_of_3">
+        <input type="checkbox" name="field-{{ forloop.counter }}" id="{{ forloop.counter }}" hidden>
+        <label for="{{ forloop.counter }}">
+          <div class="unchecked" style="background-image: url({% get_media_prefix %}{{pair.0}})"></div>
+          <div class="checked" style="background-image: url({% get_media_prefix %}{{pair.1}})"></div>
+        </label>
+      </div>
 
-{% endfor %}
+      {% if forloop.counter|divisibleby:"3" and not forloop.last %}
+        </div><div class="section group">
+      {% endif %}
 
-<br>
+    {% endfor %}
+    </div>
 
+    <div class="section group">
+      <div class="col span_3_of_3">
+        <button class="btn" type="submit">Submit</button>
+      </div>
+    </div>
 
+  </form>
+</div>
+
+<script>
+!function(t,o){"function"==typeof define&&define.amd?define(o):"object"==typeof exports?module.exports=o():t.tingle=o()}(this,function(){function t(t){var o={onClose:null,onOpen:null,beforeClose:null,stickyFooter:!1,footer:!1,cssClass:[],closeLabel:"Close"};this.opts=h({},o,t),this.init()}function o(){this.modal.classList.contains("tingle-modal--visible")&&(this.isOverflow()?this.modal.classList.add("tingle-modal--overflow"):this.modal.classList.remove("tingle-modal--overflow"),!this.isOverflow()&&this.opts.stickyFooter?this.setStickyFooter(!1):this.isOverflow()&&this.opts.stickyFooter&&(e.call(this),this.setStickyFooter(!0)))}function e(){this.modalBoxFooter&&(this.modalBoxFooter.style.width=this.modalBox.clientWidth+"px",this.modalBoxFooter.style.left=this.modalBox.offsetLeft+"px")}function i(){this.modal=document.createElement("div"),this.modal.classList.add("tingle-modal"),this.modal.style.display="none",this.opts.cssClass.forEach(function(t){"string"==typeof t&&this.modal.classList.add(t)},this),this.modalCloseBtn=document.createElement("button"),this.modalCloseBtn.classList.add("tingle-modal__close"),this.modalCloseBtnIcon=document.createElement("span"),this.modalCloseBtnIcon.classList.add("tingle-modal__closeIcon"),this.modalCloseBtnIcon.innerHTML="×",this.modalCloseBtnLabel=document.createElement("span"),this.modalCloseBtnLabel.classList.add("tingle-modal__closeLabel"),this.modalCloseBtnLabel.innerHTML=this.opts.closeLabel,this.modalCloseBtn.appendChild(this.modalCloseBtnIcon),this.modalCloseBtn.appendChild(this.modalCloseBtnLabel),this.modalBox=document.createElement("div"),this.modalBox.classList.add("tingle-modal-box"),this.modalBoxContent=document.createElement("div"),this.modalBoxContent.classList.add("tingle-modal-box__content"),this.modalBox.appendChild(this.modalBoxContent),this.modal.appendChild(this.modalCloseBtn),this.modal.appendChild(this.modalBox)}function s(){this.modalBoxFooter=document.createElement("div"),this.modalBoxFooter.classList.add("tingle-modal-box__footer"),this.modalBox.appendChild(this.modalBoxFooter)}function n(){this._events={clickCloseBtn:this.close.bind(this),clickOverlay:d.bind(this),resize:o.bind(this),keyboardNav:l.bind(this)},this.modalCloseBtn.addEventListener("click",this._events.clickCloseBtn),this.modal.addEventListener("mousedown",this._events.clickOverlay),window.addEventListener("resize",this._events.resize),document.addEventListener("keydown",this._events.keyboardNav)}function l(t){27===t.which&&this.isOpen()&&this.close()}function d(t){!a(t.target,"tingle-modal")&&t.clientX<this.modal.clientWidth&&this.close()}function a(t,o){for(;(t=t.parentElement)&&!t.classList.contains(o););return t}function r(){this.modalCloseBtn.removeEventListener("click",this._events.clickCloseBtn),this.modal.removeEventListener("mousedown",this._events.clickOverlay),window.removeEventListener("resize",this._events.resize),document.removeEventListener("keydown",this._events.keyboardNav)}function h(){for(var t=1;t<arguments.length;t++)for(var o in arguments[t])arguments[t].hasOwnProperty(o)&&(arguments[0][o]=arguments[t][o]);return arguments[0]}function m(){var t,o=document.createElement("tingle-test-transition"),e={transition:"transitionend",OTransition:"oTransitionEnd",MozTransition:"transitionend",WebkitTransition:"webkitTransitionEnd"};for(t in e)if(void 0!==o.style[t])return e[t]}var c=m();return t.prototype.init=function(){this.modal||(i.call(this),n.call(this),document.body.insertBefore(this.modal,document.body.firstChild),this.opts.footer&&this.addFooter())},t.prototype.destroy=function(){null!==this.modal&&(r.call(this),this.modal.parentNode.removeChild(this.modal),this.modal=null)},t.prototype.open=function(){this.modal.style.removeProperty?this.modal.style.removeProperty("display"):this.modal.style.removeAttribute("display"),document.body.classList.add("tingle-enabled"),this.setStickyFooter(this.opts.stickyFooter),this.modal.classList.add("tingle-modal--visible");var t=this;c&&this.modal.addEventListener(c,function o(){"function"==typeof t.opts.onOpen&&t.opts.onOpen.call(t),t.modal.removeEventListener(c,o,!1)},!1),o.call(this)},t.prototype.isOpen=function(){return!!this.modal.classList.contains("tingle-modal--visible")},t.prototype.close=function(){if("function"==typeof this.opts.beforeClose){var t=this.opts.beforeClose.call(this);if(!t)return}document.body.classList.remove("tingle-enabled"),this.modal.classList.remove("tingle-modal--visible");var o=this;c&&this.modal.addEventListener(c,function t(){o.modal.removeEventListener(c,t,!1),o.modal.style.display="none","function"==typeof o.opts.onClose&&o.opts.onClose.call(this)},!1)},t.prototype.setContent=function(t){"string"==typeof t?this.modalBoxContent.innerHTML=t:(this.modalBoxContent.innerHTML="",this.modalBoxContent.appendChild(t))},t.prototype.getContent=function(){return this.modalBoxContent},t.prototype.addFooter=function(){s.call(this)},t.prototype.setFooterContent=function(t){this.modalBoxFooter.innerHTML=t},t.prototype.getFooterContent=function(){return this.modalBoxFooter},t.prototype.setStickyFooter=function(t){this.isOverflow()||(t=!1),t?this.modalBox.contains(this.modalBoxFooter)&&(this.modalBox.removeChild(this.modalBoxFooter),this.modal.appendChild(this.modalBoxFooter),this.modalBoxFooter.classList.add("tingle-modal-box__footer--sticky"),e.call(this),this.modalBoxContent.style["padding-bottom"]=this.modalBoxFooter.clientHeight+20+"px"):this.modalBoxFooter&&(this.modalBox.contains(this.modalBoxFooter)||(this.modal.removeChild(this.modalBoxFooter),this.modalBox.appendChild(this.modalBoxFooter),this.modalBoxFooter.style.width="auto",this.modalBoxFooter.style.left="",this.modalBoxContent.style["padding-bottom"]="",this.modalBoxFooter.classList.remove("tingle-modal-box__footer--sticky")))},t.prototype.addFooterBtn=function(t,o,e){var i=document.createElement("button");return i.innerHTML=t,i.addEventListener("click",e),"string"==typeof o&&o.length&&o.split(" ").forEach(function(t){i.classList.add(t)}),this.modalBoxFooter.appendChild(i),i},t.prototype.resize=function(){console.warn("Resize is deprecated and will be removed in version 1.0")},t.prototype.isOverflow=function(){var t=window.innerHeight,o=this.modalBox.clientHeight;return o>=t},{modal:t}});
+</script>
 
 </body>
 </html>
