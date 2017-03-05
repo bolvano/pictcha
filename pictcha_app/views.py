@@ -72,7 +72,7 @@ def get_pics(secret, session):
     creates pictures set for a preset secret
     1) chooses random original pics
     2) creates distorted if they don't exist already
-    3) populates session folder with pairs according to the secret 
+    3) populates session folder with pairs according to the secret
 
     TODO: clean-up and struct
     '''
@@ -102,7 +102,7 @@ def get_pics(secret, session):
 
     try:
         shutil.rmtree(session_dir)
-    except Exception: # TODO: 
+    except Exception: # TODO:
         pass
 
     os.mkdir(session_dir)
@@ -137,7 +137,6 @@ def get_pics(secret, session):
 
 
 def index(request):
-
     '''
     Main controller
     '''
@@ -168,7 +167,7 @@ def index(request):
 
     secret_bin = "{0:b}".format(secret).zfill(settings.NUMBER_OF_PICS)
 
-    data = {'secret': secret_bin, 
+    data = {'secret': secret_bin,
             'pics': pics,
             'success': success}
 

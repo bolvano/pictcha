@@ -126,7 +126,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Number of pics in PICTCHA
-NUMBER_OF_PICS = 6
+NUMBER_OF_PICS = 9
 
 # not too big not to junk server with session pics
 SESSION_COOKIE_AGE = 60*60
