@@ -344,7 +344,7 @@
             break;
           default:
             modal.open();
-            modal.setContent('Enter captcha, please!');
+            modal.setContent('Switch all the images to the correct state, please!');
             break;
         }
       });
@@ -359,7 +359,7 @@
   <form action="" method="POST">
     {% csrf_token %}
     <input type="hidden" name="new" value="1">
-    <button class="btn" type="submit">Другие картинки</button>
+    <button class="btn" type="submit">New PICTCHA</button>
   </form>
 
   <form action="/" method="POST">

@@ -148,7 +148,12 @@ def index(request):
     if request.method == "POST":
         new = request.POST.get("new", False)
         if not new:
-            guess = request.POST.get("guess", False)
+            guess = ''
+            for i in range(1, settings.NUMBER_OF_PICS + 1):
+                if 'field-{}'.format(i) in request.POST:
+                    guess += '1'
+                else:
+                    guess += '0'
 
     secret = request.session.get('secret', None)
     pics = request.session.get('pics', None)
